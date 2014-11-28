@@ -61,14 +61,16 @@ class DesignDocument(object):
         return self._document
 
     @asyncio.coroutine
-    def info(self, *, auth=None):
+    def info(self, *, auth=None,
+                 **request_options):
         """:ref:`Returns view index information <api/ddoc/info>`.
 
         :param auth: :class:`aiocouchdb.authn.AuthProvider` instance
 
         :rtype: dict
         """
-        resp = yield from self.resource.get('_info', auth=auth)
+        resp = yield from self.resource.get('_info', auth=auth,
+                 **request_options)
         yield from resp.maybe_raise_error()
         return (yield from resp.json())
 
@@ -95,7 +97,8 @@ class DesignDocument(object):
              stale=None,
              startkey=...,
              startkey_docid=None,
-             update_seq=None):
+             update_seq=None,
+                 **request_options):
         """Calls a :ref:`list function <api/ddoc/list>` and returns a raw
         response object.
 
@@ -139,12 +142,14 @@ class DesignDocument(object):
                                                        auth=auth,
                                                        data=data,
                                                        params=params,
-                                                       headers=headers)
+                                                       headers=headers,
+                                                       **request_options)
         return resp
 
     @asyncio.coroutine
     def rewrite(self, *path,
-                auth=None, method=None, headers=None, data=None, params=None):
+                auth=None, method=None, headers=None, data=None, params=None,
+                 **request_options):
         """Requests :ref:`rewrite <api/ddoc/rewrite>` resource and returns a
         raw response object.
 
@@ -161,13 +166,15 @@ class DesignDocument(object):
             method = 'GET' if data is None else 'POST'
 
         resp = yield from self.resource('_rewrite', *path).request(
-            method, auth=auth, data=data, params=params, headers=headers)
+            method, auth=auth, data=data, params=params, headers=headers,
+                 **request_options)
         return resp
 
     @asyncio.coroutine
     def show(self, show_name, docid=None, *,
              auth=None, method=None, headers=None, data=None, params=None,
-             format=None):
+             format=None,
+                 **request_options):
         """Calls a :ref:`show function <api/ddoc/show>` and returns a raw
         response object.
 
@@ -202,12 +209,14 @@ class DesignDocument(object):
                                                        auth=auth,
                                                        data=data,
                                                        params=params,
-                                                       headers=headers)
+                                                       headers=headers,
+                 **request_options)
         return resp
 
     @asyncio.coroutine
     def update(self, update_name, docid=None, *,
-               auth=None, method=None, headers=None, data=None, params=None):
+               auth=None, method=None, headers=None, data=None, params=None,
+                 **request_options):
         """Calls a :ref:`show function <api/ddoc/update>` and returns a raw
         response object.
 
@@ -235,7 +244,8 @@ class DesignDocument(object):
                                                        auth=auth,
                                                        data=data,
                                                        params=params,
-                                                       headers=headers)
+                                                       headers=headers,
+                 **request_options)
         return resp
 
     @asyncio.coroutine
@@ -258,7 +268,8 @@ class DesignDocument(object):
              stale=None,
              startkey=...,
              startkey_docid=None,
-             update_seq=None):
+             update_seq=None,
+                 **request_options):
         """Queries a :ref:`stored view <api/ddoc/view>` by the name with
         the specified parameters.
 
@@ -309,4 +320,5 @@ class DesignDocument(object):
         view = self.view_class(self.resource('_view', view_name))
         return (yield from view.request(auth=auth,
                                         feed_buffer_size=feed_buffer_size,
-                                        params=params))
+                                        params=params,
+                 **request_options))

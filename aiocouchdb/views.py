@@ -23,7 +23,8 @@ class View(object):
                 auth=None,
                 feed_buffer_size=None,
                 data=None,
-                params=None):
+                params=None,
+                 **request_options):
         """Requests a view associated with the owned resource.
 
         :param auth: :class:`aiocouchdb.authn.AuthProvider` instance
@@ -42,7 +43,8 @@ class View(object):
         else:
             request = self.resource.get
 
-        resp = yield from request(auth=auth, data=data, params=params)
+        resp = yield from request(auth=auth, data=data, params=params,
+                 **request_options)
         yield from resp.maybe_raise_error()
         return ViewFeed(resp, buffer_size=feed_buffer_size)
 
